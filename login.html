@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Login - RentWatch BLR</title>
+  <link rel="stylesheet" href="style.css">
+  <style>body{font-family:Arial,Helvetica,sans-serif;padding:24px}form{max-width:420px;margin:40px auto;display:flex;flex-direction:column;gap:8px}input,select{padding:10px;border-radius:6px;border:1px solid #ddd}button{padding:10px;border-radius:6px;background:#2563eb;color:#fff;border:none;cursor:pointer}</style>
+</head>
+<body>
+  <a href="index.html">← Home</a>
+  <h1>Login or Register</h1>
+  <form id="loginForm">
+    <input name="email" type="email" placeholder="Email" required>
+    <input name="password" type="password" placeholder="Password" required>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
+      <button type="submit">Login</button>
+      <button type="button" id="showRegister" style="background:#22c55e;">Register</button>
+    </div>
+  </form>
+
+  <form id="registerForm" style="display:none;max-width:420px;margin:20px auto;">
+    <input name="name" placeholder="Full name" required>
+    <input name="email" type="email" placeholder="Email" required>
+    <input name="password" type="password" placeholder="Password" required>
+    <select name="role" required>
+      <option value="">Select role</option>
+      <option value="tenant">Tenant</option>
+      <option value="landlord">Landlord</option>
+    </select>
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <button type="submit">Create account</button>
+      <button type="button" id="cancelRegister" style="background:#888;">Cancel</button>
+    </div>
+  </form>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    document.getElementById('showRegister').addEventListener('click', ()=>{ registerForm.style.display='block'; loginForm.style.display='none'; });
+    document.getElementById('cancelRegister').addEventListener('click', ()=>{ registerForm.style.display='none'; loginForm.style.display='block'; });
+
+    loginForm.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const email = loginForm.email.value;
+      const password = loginForm.password.value;
+      try{
+        const res = await fetch('/api/auth/login',{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, password }) });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Login failed');
+        localStorage.setItem('rw_token', data.token);
+        // redirect home
+        window.location.href = '/';
+      } catch (err) {
+        alert(err.message || 'Login failed');
+      }
+    });
+
+    registerForm.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const name = registerForm.name.value;
+      const email = registerForm.email.value;
+      const password = registerForm.password.value;
+      const role = registerForm.role.value;
+      try{
+        const res = await fetch('/api/auth/register',{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, email, password, role }) });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Register failed');
+        alert('Account created — you can now login');
+        registerForm.style.display='none'; loginForm.style.display='block';
+      } catch (err) {
+        alert(err.message || 'Register failed');
+      }
+    });
+  </script>
+</body>
+</html>

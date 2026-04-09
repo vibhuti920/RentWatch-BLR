@@ -1,0 +1,197 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Forum</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">RentWatch BLR</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="browse.html">Browse Complaints</a>
+      <a href="forum.html">Forum</a>
+      <a href="resources.html">Resources</a>
+    </div>
+  </nav>
+
+  <main class="container" style="max-width:1000px;margin:24px auto;padding:12px;">
+    <h1>Discussion Forum</h1>
+    <p>Share experiences, ask questions, and support others in the rental community.</p>
+
+    <section id="newPostSection" style="margin:16px 0;padding:12px;border-radius:10px;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <textarea id="newPostText" placeholder="Share something with the community..." rows="3" style="flex:1;padding:10px;border-radius:8px;border:1px solid #ddd"></textarea>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button id="postBtn" style="background:#2563eb;color:#fff;padding:10px 14px;border-radius:8px;border:none;cursor:pointer">Post</button>
+          <button id="clearBtn" style="background:#f3f4f6;padding:8px;border-radius:8px;border:1px solid #ddd;cursor:pointer">Clear</button>
+        </div>
+      </div>
+      <div style="font-size:13px;color:#666;margin-top:8px">You must be logged in to post; login link at top-right.</div>
+    </section>
+
+    <section id="posts" style="display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px;"></section>
+  </main>
+
+  <footer>© 2025 RentWatch BLR</footer>
+
+  <script>
+    // Simple client-side forum demo stored in localStorage
+    const STORAGE_KEY = 'rw_forum_posts_v1';
+
+    // seeded sample posts (12)
+    const seeds = [
+      { id: 'p1', author: 'Anita R.', role: 'tenant', text: 'Does anyone know if landlords can increase rent mid-lease in Bangalore?', likes: 4, dislikes:1, likedBy:[], dislikedBy:[], comments:[{id:'c1',author:'Karthik',text:'No, usually lease terms protect you until contract term ends.', authorId:null}], createdAt: Date.now()-1000*60*60*24*3 },
+  { id: 'p2', author: 'Rohit S.', role: 'landlord', text: 'Best ways to document property condition before move-in?', likes: 3, dislikes:0, likedBy:[], dislikedBy:[], comments:[], createdAt: Date.now()-1000*60*60*24*6 },
+  { id: 'p3', author: 'Leena P.', role: 'tenant', text: 'Is it normal to be asked for 3 months rent as deposit?', likes: 8, dislikes:2, likedBy:[], dislikedBy:[], comments:[{id:'c2',author:'Meera',text:'3 months is common in many places here.', authorId:null}], createdAt: Date.now()-1000*60*60*24*10 },
+  { id: 'p4', author: 'Suresh', role: 'tenant', text: 'Any recommendations for plumbers near Koramangala?', likes: 2, dislikes:0, likedBy:[], dislikedBy:[], comments:[], createdAt: Date.now()-1000*60*60*5 },
+  { id: 'p5', author: 'Arjun', role: 'landlord', text: 'How do you screen tenants quickly?', likes: 1, dislikes:0, likedBy:[], dislikedBy:[], comments:[{id:'c3',author:'Nisha',text:'Check references and do a quick background check.', authorId:null}], createdAt: Date.now()-1000*60*60*2 },
+  { id: 'p6', author: 'Priya', role: 'tenant', text: 'Can we withhold rent if repairs are not done?', likes: 6, dislikes:1, likedBy:[], dislikedBy:[], comments:[{id:'c4',author:'Advocate Arun',text:'Legally risky; consult a lawyer first.', authorId:null}], createdAt: Date.now()-1000*60*60*24*1 },
+  { id: 'p7', author: 'Manish', role: 'landlord', text: 'Tips to avoid property damage from tenants?', likes: 0, dislikes:0, likedBy:[], dislikedBy:[], comments:[], createdAt: Date.now()-1000*60*60*24*12 },
+  { id: 'p8', author: 'Sana', role: 'tenant', text: 'Is it okay to negotiate deposit return timelines?', likes: 3, dislikes:0, likedBy:[], dislikedBy:[], comments:[], createdAt: Date.now()-1000*60*60*24*8 },
+  { id: 'p9', author: 'Vikram', role: 'landlord', text: 'Any recommended rental agreements template?', likes: 2, dislikes:0, likedBy:[], dislikedBy:[], comments:[], createdAt: Date.now()-1000*60*60*24*20 },
+  { id: 'p10', author: 'Asha', role: 'tenant', text: 'How to document harassment by landlord?', likes: 5, dislikes:0, likedBy:[], dislikedBy:[], comments:[{id:'c5',author:'Vikram',text:'Keep messages and photos; register an FIR if serious.', authorId:null}], createdAt: Date.now()-1000*60*60*24*4 },
+  { id: 'p11', author: 'Rahul', role: 'tenant', text: 'Utilities billing issues — who is responsible?', likes: 1, dislikes:0, likedBy:[], dislikedBy:[], comments:[], createdAt: Date.now()-1000*60*60*24*15 },
+      { id: 'p12', author: 'Geeta', role: 'landlord', text: 'How to handle rent defaults politely?', likes: 2, dislikes:1, likedBy:[], dislikedBy:[], comments:[], createdAt: Date.now()-1000*60*60*24*7 }
+    ];
+
+    function loadPosts(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) { localStorage.setItem(STORAGE_KEY, JSON.stringify(seeds)); return seeds.slice(); }
+      try { return JSON.parse(raw); } catch(e){ localStorage.setItem(STORAGE_KEY, JSON.stringify(seeds)); return seeds.slice(); }
+    }
+
+    function savePosts(posts){ localStorage.setItem(STORAGE_KEY, JSON.stringify(posts)); }
+
+    let posts = loadPosts();
+
+    function render(){
+      const container = document.getElementById('posts');
+      container.innerHTML = '';
+      // newest first
+      posts.slice().sort((a,b)=> (b.createdAt||0) - (a.createdAt||0)).forEach(p=>{
+        const el = document.createElement('div');
+        el.style.cssText = 'background:#fff;padding:12px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.06);';
+        const date = new Date(p.createdAt || Date.now());
+        // Ensure likedBy/dislikedBy arrays exist
+        p.likedBy = p.likedBy || [];
+        p.dislikedBy = p.dislikedBy || [];
+        el.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-weight:600">${p.author} <span style="font-size:12px;color:#666;margin-left:8px">${p.role}</span></div>
+            <div style="font-size:12px;color:#888">${isNaN(date.getTime()) ? 'Unknown' : date.toLocaleString()}</div>
+          </div>
+          <div style="margin-bottom:8px;color:#222">${escapeHtml(p.text)}</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button data-id="${p.id}" class="like" style="background:transparent;border:none;cursor:pointer">👍 <span>${p.likedBy.length||0}</span></button>
+            <button data-id="${p.id}" class="dislike" style="background:transparent;border:none;cursor:pointer">👎 <span>${p.dislikedBy.length||0}</span></button>
+            <button data-id="${p.id}" class="commentBtn" style="margin-left:auto;background:#f3f4f6;border:1px solid #e5e7eb;padding:6px;border-radius:6px;">Comment</button>
+          </div>
+          <div class="comments" style="margin-top:8px;padding-top:8px;border-top:1px dashed #eee">
+            ${ (p.comments||[]).map(c=>`<div style="padding:6px 0"><strong>${c.author}</strong>: ${escapeHtml(c.text)} ${c.authorId?`<button data-post="${p.id}" data-comment="${c.id}" class="delComment" style="margin-left:8px;background:#fee2e2;border:none;color:#b91c1c;padding:2px 6px;border-radius:6px;">Delete</button>`:''}</div>`).join('') }
+            <div style="display:flex;gap:8px;margin-top:8px;">
+              <input data-id="${p.id}" class="commentInput" placeholder="Write a comment..." style="flex:1;padding:8px;border-radius:6px;border:1px solid #ddd">
+              <button data-id="${p.id}" class="postComment" style="padding:8px;border-radius:6px;background:#2563eb;color:#fff;border:none;">Post</button>
+            </div>
+          </div>
+        `;
+
+        // If current user is the author of post, show delete button
+        const currentId = getCurrentUserId();
+        if (currentId && p.authorId && String(currentId) === String(p.authorId)) {
+          const del = document.createElement('button'); del.textContent='Delete'; del.style.cssText='margin-left:8px;background:#fee2e2;border:none;color:#b91c1c;padding:6px;border-radius:6px;';
+          del.addEventListener('click', ()=>{ if (confirm('Delete this post?')) { posts = posts.filter(x=>x.id!==p.id); savePosts(posts); render(); } });
+          el.querySelector('div').appendChild(del);
+        }
+
+        container.appendChild(el);
+      });
+
+      // attach handlers
+      document.querySelectorAll('button.like').forEach(b=> b.onclick = onLike);
+      document.querySelectorAll('button.dislike').forEach(b=> b.onclick = onDislike);
+      document.querySelectorAll('button.commentBtn').forEach(b=> b.onclick = (e)=>{ const id=e.currentTarget.dataset.id; const input=document.querySelector(`input.commentInput[data-id="${id}"]`); input.scrollIntoView({behavior:'smooth',block:'center'}); input.focus(); });
+      document.querySelectorAll('button.postComment').forEach(b=> b.onclick = onPostComment);
+      document.querySelectorAll('button.delComment').forEach(btn=> btn.onclick = function(e){
+        const postId = e.currentTarget.dataset.post; const commentId = e.currentTarget.dataset.comment;
+        if (!requireLogin()) return; const uid = getCurrentUserId();
+        const p = posts.find(x=>x.id===postId); if (!p) return;
+        const c = p.comments.find(x=>x.id===commentId); if (!c) return;
+        if (!c.authorId || String(c.authorId) !== String(uid)) { alert('You can only delete your own comments'); return; }
+        if (!confirm('Delete this comment?')) return;
+        p.comments = p.comments.filter(x=>x.id!==commentId); savePosts(posts); render();
+      });
+    }
+
+    function onLike(e){
+      const id = e.currentTarget.dataset.id;
+      if (!requireLogin()) return;
+      const uid = getCurrentUserId();
+      const p = posts.find(x=>x.id===id); if (!p) return;
+      p.likedBy = p.likedBy || []; p.dislikedBy = p.dislikedBy || [];
+      if (p.likedBy.includes(uid)) { // toggle off
+        p.likedBy = p.likedBy.filter(x=>x!==uid);
+      } else {
+        p.likedBy.push(uid);
+        // remove from disliked if present
+        p.dislikedBy = p.dislikedBy.filter(x=>x!==uid);
+      }
+      savePosts(posts); render();
+    }
+    function onDislike(e){
+      const id = e.currentTarget.dataset.id;
+      if (!requireLogin()) return;
+      const uid = getCurrentUserId();
+      const p = posts.find(x=>x.id===id); if (!p) return;
+      p.likedBy = p.likedBy || []; p.dislikedBy = p.dislikedBy || [];
+      if (p.dislikedBy.includes(uid)) {
+        p.dislikedBy = p.dislikedBy.filter(x=>x!==uid);
+      } else {
+        p.dislikedBy.push(uid);
+        p.likedBy = p.likedBy.filter(x=>x!==uid);
+      }
+      savePosts(posts); render();
+    }
+
+    function onPostComment(e){
+      if (!requireLogin()) return;
+      const id = e.currentTarget.dataset.id;
+      const input = document.querySelector(`input.commentInput[data-id="${id}"]`);
+      const text = input.value.trim(); if (!text) return;
+      const p = posts.find(x=>x.id===id); if (!p) return;
+      const author = getCurrentUserName() || 'Anonymous';
+      const authorId = getCurrentUserId();
+      p.comments = p.comments||[]; p.comments.push({ id: 'c' + Math.random().toString(36).slice(2,9), author, authorId, text });
+      savePosts(posts); input.value=''; render();
+    }
+
+    document.getElementById('postBtn').addEventListener('click', ()=>{
+      if (!requireLogin()) return;
+      const text = document.getElementById('newPostText').value.trim(); if (!text) return alert('Enter a post');
+      const author = getCurrentUserName() || 'Anonymous';
+      const role = getCurrentUserRole() || 'tenant';
+  const p = { id: 'p' + Math.random().toString(36).slice(2,9), author, authorId: getCurrentUserId(), role, text, likedBy:[], dislikedBy:[], comments:[], createdAt: Date.now() };
+      posts.push(p); savePosts(posts); document.getElementById('newPostText').value=''; render();
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', ()=> document.getElementById('newPostText').value='');
+
+    function requireLogin(){
+      const token = localStorage.getItem('rw_token');
+      if (!token) { window.location.href = '/login.html'; return false; }
+      return true;
+    }
+
+    function getCurrentUserName(){
+      try{ const t = localStorage.getItem('rw_token'); if (!t) return null; const p = JSON.parse(atob(t.split('.')[1])); return p.name; } catch(e){return null}
+    }
+  function getCurrentUserRole(){ try{ const t = localStorage.getItem('rw_token'); if (!t) return null; const p = JSON.parse(atob(t.split('.')[1])); return p.role; } catch(e){return null} }
+  function getCurrentUserId(){ try{ const t = localStorage.getItem('rw_token'); if (!t) return null; const p = JSON.parse(atob(t.split('.')[1])); return p.id || p._id || null; } catch(e){return null} }
+
+    function escapeHtml(str){ return (str+'').replace(/[&<>"]/g, s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s])); }
+
+    render();
+  </script>
+</body>
+</html>

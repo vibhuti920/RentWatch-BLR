@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Browse Complaints</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <style>
+    .complaint-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .complaint-card {
+      background: #fff;
+      color: #333;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      width: 300px;
+      transition: transform 0.3s ease;
+    }
+
+    .complaint-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .complaint-card h3 {
+      margin-top: 0;
+      font-size: 1.3rem;
+    }
+
+    .complaint-card p {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .actions button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: #007BFF;
+      transition: transform 0.2s ease;
+    }
+
+    .actions button:hover {
+      transform: scale(1.2);
+    }
+
+    .actions span {
+      font-size: 0.95rem;
+      margin-left: 6px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">RentWatch BLR</a>
+    <div class="nav-links">
+      <a href="index.html"><i class="fas fa-house"></i>Home</a>
+      <a href="browse.html"><i class="fas fa-folder-open"></i>Browse Complaints</a>
+      <a href="forum.html"><i class="fas fa-comments"></i>Forum</a>
+      <a href="resources.html"><i class="fas fa-book"></i>Resources</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <h1>Browse Complaints</h1>
+    <p>Explore issues raised by tenants and landlords across Bangalore.</p>
+  </header>
+
+  <div class="complaint-container" id="complaintContainer"></div>
+  <div style="text-align:center;color:#666;margin-top:12px;" id="emptyState" hidden>No complaints yet. Be the first to file one.</div>
+
+  <script>
+    async function fetchComplaints() {
+      const res = await fetch('/api/public/complaints');
+      const complaints = await res.json();
+      const container = document.getElementById('complaintContainer');
+      const empty = document.getElementById('emptyState');
+      container.innerHTML = '';
+      if (!complaints || complaints.length === 0) {
+        empty.hidden = false;
+        return;
+      }
+      empty.hidden = true;
+
+      complaints.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'complaint-card';
+        // Prefer createdAt; if missing, try to derive from ObjectId timestamp; otherwise use now
+        let created = null;
+        if (c.createdAt) created = new Date(c.createdAt);
+        else if (c._id && typeof c._id === 'string' && c._id.length === 24) {
+          // ObjectId string -> take first 8 chars as hex timestamp
+          const ts = parseInt(c._id.substring(0,8), 16) * 1000;
+          created = new Date(ts);
+        } else if (c._id && c._id.getTimestamp) {
+          created = c._id.getTimestamp();
+        } else {
+          created = new Date();
+        }
+        const formatted = isNaN(created.getTime()) ? 'Unknown date' : created.toLocaleString();
+
+        card.innerHTML = `
+          <h3>${c.role === 'tenant' ? 'Tenant Complaint' : 'Landlord Complaint'}</h3>
+          <p style="margin:6px 0;color:#555;"><strong>${c.issueType || 'General'}</strong></p>
+          <p style="font-size:0.95rem;color:#444;margin-bottom:10px;">${c.description}</p>
+          <p style="font-size:0.85rem;color:#777;margin-bottom:8px;">Role: <strong>${c.role}</strong> · ${formatted}</p>
+          <p style="font-size:0.85rem;color:${c.status==='Resolved'?'#16a34a':'#d97706'};margin-bottom:8px;">Status: <strong>${c.status}</strong></p>
+          <div class="actions">
+            <button data-id="${c.id}" class="like-btn"><i class="fas fa-thumbs-up"></i><span>${c.likes || 0}</span></button>
+            <button data-id="${c.id}" class="dislike-btn"><i class="fas fa-thumbs-down"></i><span>${c.dislikes || 0}</span></button>
+          </div>
+        `;
+
+        // event delegation for buttons inside card
+        card.querySelector('.like-btn').addEventListener('click', async (e) => {
+          const btn = e.currentTarget;
+          const id = btn.getAttribute('data-id');
+          // optimistic UI
+          const span = btn.querySelector('span');
+          span.textContent = Number(span.textContent) + 1;
+          try {
+            await fetch(`http://localhost:3000/api/complaints/${id}/like`, { method: 'POST' });
+          } catch (err) {
+            // rollback on error
+            span.textContent = Number(span.textContent) - 1;
+            console.error(err);
+          }
+        });
+
+        card.querySelector('.dislike-btn').addEventListener('click', async (e) => {
+          const btn = e.currentTarget;
+          const id = btn.getAttribute('data-id');
+          const span = btn.querySelector('span');
+          span.textContent = Number(span.textContent) + 1;
+          try {
+            await fetch(`http://localhost:3000/api/complaints/${id}/dislike`, { method: 'POST' });
+          } catch (err) {
+            span.textContent = Number(span.textContent) - 1;
+            console.error(err);
+          }
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    async function likeComplaint(id) {
+      await fetch(`http://localhost:3000/api/complaints/${id}/like`, { method: 'POST' });
+      fetchComplaints();
+    }
+
+    async function dislikeComplaint(id) {
+      await fetch(`http://localhost:3000/api/complaints/${id}/dislike`, { method: 'POST' });
+      fetchComplaints();
+    }
+
+    fetchComplaints();
+  </script>
+</body>
+</html>

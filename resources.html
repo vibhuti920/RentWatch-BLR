@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Resources & Support</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: #f7f8fc;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      color: #222;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 1em;
+    }
+    h1 {
+      font-size: 2.2em;
+      margin-bottom: 0.2em;
+      color: #2563eb;
+      font-weight: 700;
+    }
+    .subtitle {
+      color: #444;
+      margin-bottom: 2em;
+      font-size: 1.15em;
+    }
+    .helpline-section {
+      background: #e6f7ee;
+      border-radius: 14px;
+      padding: 2em 1.5em 1.5em 1.5em;
+      margin-bottom: 2em;
+      box-shadow: 0 2px 8px rgba(34,197,94,0.07);
+    }
+    .helpline-title {
+      font-size: 1.2em;
+      font-weight: 600;
+      color: #15803d;
+      margin-bottom: 1.2em;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+    }
+    .helplines {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5em;
+    }
+    .helpline-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(34,197,94,0.05);
+      padding: 1em 1.2em;
+      flex: 1 1 220px;
+      min-width: 220px;
+      margin-bottom: 1em;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3em;
+    }
+    .helpline-label {
+      font-weight: 600;
+      color: #2563eb;
+      font-size: 1em;
+    }
+    .helpline-desc {
+      font-size: 0.97em;
+      color: #444;
+    }
+    .helpline-number {
+      background: #f1f5f9;
+      color: #15803d;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 0.3em 1em;
+      display: inline-block;
+      margin-top: 0.5em;
+      font-size: 1em;
+      letter-spacing: 1px;
+    }
+    .resources-row {
+      display: flex;
+      gap: 2em;
+      margin-bottom: 2em;
+      flex-wrap: wrap;
+    }
+    .resource-box {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.07);
+      flex: 1 1 300px;
+      min-width: 280px;
+      padding: 1.5em 1.2em 1.2em 1.2em;
+      margin-bottom: 1em;
+    }
+    .resource-title {
+      font-size: 1.15em;
+      font-weight: 600;
+      color: #2563eb;
+      margin-bottom: 1em;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+    }
+    .resource-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .resource-list li {
+      background: #f7f8fc;
+      border-radius: 8px;
+      margin-bottom: 0.7em;
+      padding: 0.8em 1em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 1em;
+      color: #222;
+      box-shadow: 0 1px 2px rgba(37,99,235,0.04);
+    }
+    .resource-list li:last-child {
+      margin-bottom: 0;
+    }
+    .resource-link {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 500;
+      margin-right: 0.5em;
+      transition: color 0.2s;
+    }
+    .resource-link:hover {
+      color: #1746a2;
+      text-decoration: underline;
+    }
+    .external-icon {
+      font-size: 1em;
+      margin-left: 0.2em;
+      color: #888;
+    }
+    @media (max-width: 900px) {
+      .resources-row {
+        flex-direction: column;
+        gap: 1em;
+      }
+      .container {
+        padding: 0 0.5em;
+      }
+    }
+  </style>
+  <!-- For icons (optional, you can use Unicode or SVG) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">RentWatch BLR</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="browse.html">Browse Complaints</a>
+      <a href="forum.html">Forum</a>
+      <a href="resources.html" style="font-weight:700;color:#2563eb;">Resources</a>
+    </div>
+    <div class="nav-buttons">
+      <a href="tenant-complaint.html" class="btn blue">Tenant Complaint</a>
+      <a href="landlord-complaint.html" class="btn green">Landlord Complaint</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1>Resources & Support</h1>
+    <div class="subtitle">
+      Everything you need to know about rental rights and support services in Bangalore
+    </div>
+
+    <!-- Emergency Helplines -->
+    <section class="helpline-section">
+      <div class="helpline-title">
+        <i class="fa-solid fa-phone-volume"></i> Emergency Helplines
+      </div>
+      <div class="helplines">
+        <div class="helpline-card">
+          <span class="helpline-label">Consumer Helpline</span>
+          <span class="helpline-desc">For rental fraud and consumer rights</span>
+          <span class="helpline-number">1800-11-4000</span>
+        </div>
+        <div class="helpline-card">
+          <span class="helpline-label">Women's Helpline</span>
+          <span class="helpline-desc">For harassment and discrimination cases</span>
+          <span class="helpline-number">181</span>
+        </div>
+        <div class="helpline-card">
+          <span class="helpline-label">Legal Aid Helpline</span>
+          <span class="helpline-desc">Free legal consultation</span>
+          <span class="helpline-number">15100</span>
+        </div>
+        <div class="helpline-card">
+          <span class="helpline-label">Police Control Room</span>
+          <span class="helpline-desc">For emergency situations</span>
+          <span class="helpline-number">100</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Resource Boxes -->
+    <div class="resources-row">
+      <!-- Legal Rights -->
+      <div class="resource-box">
+        <div class="resource-title">
+          <i class="fa-solid fa-scale-balanced"></i> Legal Rights
+        </div>
+        <ul class="resource-list">
+          <li>
+            <a class="resource-link" href="https://www.karnataka.gov.in/page/Acts+and+Rules/Rent+Control+Act/en" target="_blank">
+              Karnataka Rent Control Act
+            </a>
+            <span class="external-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+          </li>
+          <li>
+            <a class="resource-link" href="https://www.indiacode.nic.in/showdata?actid=AC_CEN_5_23_00001_194801_1517807320271&type=act&sectionId=2&sectionno=2&searchFilter=Tenant%20Rights" target="_blank">
+              Tenant Rights in India
+            </a>
+            <span class="external-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+          </li>
+          <li>
+            <a class="resource-link" href="https://www.magicbricks.com/property-news/security-deposit-rules-for-tenants-and-landlords-in-india-121786.html" target="_blank">
+              Security Deposit Rules
+            </a>
+            <span class="external-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+          </li>
+        </ul>
+      </div>
+      <!-- Government Resources -->
+      <div class="resource-box">
+        <div class="resource-title">
+          <i class="fa-solid fa-building-columns"></i> Government Resources
+        </div>
+        <ul class="resource-list">
+          <li>
+            <a class="resource-link" href="https://bbmp.gov.in/rent-verification" target="_blank">
+              BBMP Rent Verification
+            </a>
+            <span class="external-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+          </li>
+          <li>
+            <a class="resource-link" href="https://consumerhelpline.gov.in/" target="_blank">
+              Consumer Court Online
+            </a>
+            <span class="external-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+          </li>
+          <li>
+            <a class="resource-link" href="https://www.bangalorecitypolice.gov.in/" target="_blank">
+              Police Complaint Portal
+            </a>
+            <span class="external-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+          </li>
+        </ul>
+      </div>
+      <!-- Community Support -->
+      <div class="resource-box">
+        <div class="resource-title">
+          <i class="fa-solid fa-users"></i> Community Support
+        </div>
+        <ul class="resource-list">
+          <li>
+            <a class="resource-link" href="https://www.facebook.com/bangaloretenantsassociation/" target="_blank">
+              Bangalore Tenants Association
+            </a>
+            <span class="external-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+          </li>
+          <li>
+            <a class="resource-link" href="https://www.nalsa.gov.in/legal-aid/legal-services-authorities" target="_blank">
+              Legal Aid Clinics
+            </a>
+            <span class="external-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+          </li>
+          <li>
+            <a class="resource-link" href="https://www.rentmediation.com/" target="_blank">
+              Rental Mediation Services
+            </a>
+            <span class="external-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <footer style="margin-top:2em;text-align:center;color:#2563eb;background:#fff;padding:1.5em 0 1em 0;border-top:1px solid #eee;">
+    © 2025 RentWatch BLR · Building Fair Rentals in Bangalore
+  </footer>
+</body>
+</html>
